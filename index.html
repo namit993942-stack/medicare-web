@@ -169,6 +169,12 @@
       margin-top: 15px;
     }
 
+    #connection {
+      text-align: center;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
     footer {
       text-align: center;
       padding: 25px;
@@ -193,6 +199,8 @@
 
 <div class="container">
 
+  <div id="connection">Connecting to Firebase...</div>
+
   <!-- MEDICINE INFORMATION -->
   <div class="card">
     <h2>💊 Medicine Information</h2>
@@ -205,20 +213,19 @@
 
         <div class="info">
           <span>Medicine Name</span>
-          <strong id="name1">Medicine A</strong>
+          <strong id="name1">Loading...</strong>
         </div>
 
         <div class="info">
           <span>Current Stock</span>
-          <strong id="stock1">2 Tablets</strong>
+          <strong id="stock1">Loading...</strong>
         </div>
 
         <div class="info">
           <span>Expiry Date</span>
-          <strong id="expiry1">20 May 2027</strong>
+          <strong id="expiry1">Loading...</strong>
         </div>
       </div>
-
 
       <!-- MEDICINE 2 -->
       <div class="medicine-card">
@@ -226,17 +233,17 @@
 
         <div class="info">
           <span>Medicine Name</span>
-          <strong id="name2">Medicine B</strong>
+          <strong id="name2">Loading...</strong>
         </div>
 
         <div class="info">
           <span>Current Stock</span>
-          <strong id="stock2">5 Tablets</strong>
+          <strong id="stock2">Loading...</strong>
         </div>
 
         <div class="info">
           <span>Expiry Date</span>
-          <strong id="expiry2">15 August 2027</strong>
+          <strong id="expiry2">Loading...</strong>
         </div>
       </div>
 
@@ -278,7 +285,7 @@
 
     <div class="update-grid">
 
-      <!-- UPDATE MEDICINE 1 -->
+      <!-- MEDICINE 1 -->
       <div class="update-box">
         <h3>Medicine 1</h3>
 
@@ -297,7 +304,7 @@
       </div>
 
 
-      <!-- UPDATE MEDICINE 2 -->
+      <!-- MEDICINE 2 -->
       <div class="update-box">
         <h3>Medicine 2</h3>
 
@@ -329,31 +336,230 @@
 </footer>
 
 
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-database-compat.js"></script>
+
 <script>
 
-function updateMedicine(number) {
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtkqGy20FkOKWnsLA-077bkJQl8zHTU8",
+    authDomain: "medicare-b4d79.firebaseapp.com",
+    databaseURL: "https://medicare-b4d79-default-rtdb.firebaseio.com",
+    projectId: "medicare-b4d79",
+    storageBucket: "medicare-b4d79.firebasestorage.app",
+    messagingSenderId: "809236117946",
+    appId: "1:809236117946:web:96ecb612637c62f262c583"
+  };
 
-  let name = document.getElementById("inputName" + number).value;
-  let stock = document.getElementById("inputStock" + number).value;
-  let expiry = document.getElementById("inputExpiry" + number).value;
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
 
-  if (name === "" || stock === "" || expiry === "") {
-    alert("Please fill all details.");
-    return;
+  // Realtime Database
+  const database = firebase.database();
+
+  const medicine1Ref = database.ref("medicines/medicine1");
+  const medicine2Ref = database.ref("medicines/medicine2");
+
+
+  // -----------------------------------
+  // CREATE DEFAULT DATA IF EMPTY
+  // -----------------------------------
+
+  database.ref("medicines").once("value").then((snapshot) => {
+
+    if (!snapshot.exists()) {
+
+      database.ref("medicines").set({
+
+        medicine1: {
+          name: "Medicine A",
+          stock: 2,
+          expiry: "2027-05-20"
+        },
+
+        medicine2: {
+          name: "Medicine B",
+          stock: 5,
+          expiry: "2027-08-15"
+        }
+
+      });
+
+    }
+
+  });
+
+
+  // -----------------------------------
+  // FORMAT DATE
+  // -----------------------------------
+
+  function formatDate(dateString) {
+
+    if (!dateString) {
+      return "-";
+    }
+
+    const date = new Date(dateString + "T00:00:00");
+
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
+
   }
 
-  document.getElementById("name" + number).innerText = name;
 
-  document.getElementById("stock" + number).innerText =
-    stock + " Tablets";
+  // -----------------------------------
+  // DISPLAY MEDICINE 1
+  // -----------------------------------
 
-  document.getElementById("expiry" + number).innerText =
-    expiry;
+  medicine1Ref.on("value", (snapshot) => {
 
-  document.getElementById("status").innerText =
-    "Medicine " + number + " updated successfully!";
+    const data = snapshot.val();
 
-}
+    if (!data) return;
+
+    document.getElementById("name1").innerText =
+      data.name || "-";
+
+    document.getElementById("stock1").innerText =
+      (data.stock ?? 0) + " Tablets";
+
+    document.getElementById("expiry1").innerText =
+      formatDate(data.expiry);
+
+  });
+
+
+  // -----------------------------------
+  // DISPLAY MEDICINE 2
+  // -----------------------------------
+
+  medicine2Ref.on("value", (snapshot) => {
+
+    const data = snapshot.val();
+
+    if (!data) return;
+
+    document.getElementById("name2").innerText =
+      data.name || "-";
+
+    document.getElementById("stock2").innerText =
+      (data.stock ?? 0) + " Tablets";
+
+    document.getElementById("expiry2").innerText =
+      formatDate(data.expiry);
+
+  });
+
+
+  // -----------------------------------
+  // FIREBASE CONNECTION STATUS
+  // -----------------------------------
+
+  database.ref(".info/connected").on("value", (snapshot) => {
+
+    if (snapshot.val() === true) {
+
+      document.getElementById("connection").innerText =
+        "🟢 Firebase Connected";
+
+      document.getElementById("connection").style.color =
+        "green";
+
+    } else {
+
+      document.getElementById("connection").innerText =
+        "🔴 Firebase Disconnected";
+
+      document.getElementById("connection").style.color =
+        "red";
+
+    }
+
+  });
+
+
+  // -----------------------------------
+  // UPDATE MEDICINE
+  // -----------------------------------
+
+  function updateMedicine(number) {
+
+    const name =
+      document.getElementById("inputName" + number).value.trim();
+
+    const stock =
+      document.getElementById("inputStock" + number).value;
+
+    const expiry =
+      document.getElementById("inputExpiry" + number).value;
+
+
+    if (name === "" || stock === "" || expiry === "") {
+
+      alert("Please fill all details.");
+
+      return;
+
+    }
+
+
+    const stockNumber = parseInt(stock);
+
+
+    if (stockNumber < 0) {
+
+      alert("Stock cannot be negative.");
+
+      return;
+
+    }
+
+
+    const medicineData = {
+
+      name: name,
+      stock: stockNumber,
+      expiry: expiry
+
+    };
+
+
+    database.ref("medicines/medicine" + number)
+      .set(medicineData)
+
+      .then(() => {
+
+        document.getElementById("status").innerText =
+          "Medicine " + number + " updated successfully!";
+
+        document.getElementById("status").style.color =
+          "green";
+
+
+        // Clear input fields
+        document.getElementById("inputName" + number).value = "";
+        document.getElementById("inputStock" + number).value = "";
+        document.getElementById("inputExpiry" + number).value = "";
+
+      })
+
+      .catch((error) => {
+
+        document.getElementById("status").innerText =
+          "Update failed: " + error.message;
+
+        document.getElementById("status").style.color =
+          "red";
+
+      });
+
+  }
 
 </script>
 
