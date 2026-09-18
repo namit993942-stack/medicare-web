@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCare - Smart Medicine Dispenser</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      color: #222;
+    }
+
+    header {
+      background: #0b5ed7;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+
+    header h1 {
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 15px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      color: #0b5ed7;
+      margin-bottom: 18px;
+    }
+
+    .medicines {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .medicine-card {
+      background: #f7f9fc;
+      border-radius: 12px;
+      padding: 18px;
+      border-left: 5px solid #0b5ed7;
+    }
+
+    .medicine-card h3 {
+      color: #0b5ed7;
+      margin-bottom: 15px;
+      font-size: 21px;
+    }
+
+    .info {
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .info span {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .info strong {
+      font-size: 17px;
+    }
+
+    .schedule {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .dose {
+      background: #eef5ff;
+      text-align: center;
+      padding: 18px;
+      border-radius: 12px;
+    }
+
+    .dose h3 {
+      margin-bottom: 8px;
+    }
+
+    .dose .time {
+      font-size: 20px;
+      font-weight: bold;
+      color: #0b5ed7;
+      margin-bottom: 5px;
+    }
+
+    .update-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .update-box {
+      background: #f7f9fc;
+      padding: 18px;
+      border-radius: 12px;
+    }
+
+    .update-box h3 {
+      margin-bottom: 15px;
+      color: #0b5ed7;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 12px 0 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #0b5ed7;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #084298;
+    }
+
+    #status {
+      text-align: center;
+      color: green;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #777;
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      .update-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>💊 MediCare</h1>
+  <p>Smart Medicine Dispenser</p>
+</header>
+
+<div class="container">
+
+  <!-- MEDICINE INFORMATION -->
+  <div class="card">
+    <h2>💊 Medicine Information</h2>
+
+    <div class="medicines">
+
+      <!-- MEDICINE 1 -->
+      <div class="medicine-card">
+        <h3>Medicine 1</h3>
+
+        <div class="info">
+          <span>Medicine Name</span>
+          <strong id="name1">Medicine A</strong>
+        </div>
+
+        <div class="info">
+          <span>Current Stock</span>
+          <strong id="stock1">2 Tablets</strong>
+        </div>
+
+        <div class="info">
+          <span>Expiry Date</span>
+          <strong id="expiry1">20 May 2027</strong>
+        </div>
+      </div>
+
+
+      <!-- MEDICINE 2 -->
+      <div class="medicine-card">
+        <h3>Medicine 2</h3>
+
+        <div class="info">
+          <span>Medicine Name</span>
+          <strong id="name2">Medicine B</strong>
+        </div>
+
+        <div class="info">
+          <span>Current Stock</span>
+          <strong id="stock2">5 Tablets</strong>
+        </div>
+
+        <div class="info">
+          <span>Expiry Date</span>
+          <strong id="expiry2">15 August 2027</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- MEDICINE SCHEDULE -->
+  <div class="card">
+    <h2>⏰ Medicine Schedule</h2>
+
+    <div class="schedule">
+
+      <div class="dose">
+        <h3>🌅 Morning</h3>
+        <div class="time">08:00 AM</div>
+        <small>Medicine 1 — 1 Tablet</small>
+      </div>
+
+      <div class="dose">
+        <h3>☀️ Afternoon</h3>
+        <div class="time">02:00 PM</div>
+        <small>Medicine 2 — 1 Tablet</small>
+      </div>
+
+      <div class="dose">
+        <h3>🌙 Night</h3>
+        <div class="time">08:00 PM</div>
+        <small>Medicine 1 — 1 Tablet</small>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- UPDATE MEDICINES -->
+  <div class="card">
+    <h2>🔄 Update Medicine Details</h2>
+
+    <div class="update-grid">
+
+      <!-- UPDATE MEDICINE 1 -->
+      <div class="update-box">
+        <h3>Medicine 1</h3>
+
+        <label>Medicine Name</label>
+        <input type="text" id="inputName1" placeholder="Enter medicine name">
+
+        <label>Stock</label>
+        <input type="number" id="inputStock1" placeholder="Enter stock">
+
+        <label>Expiry Date</label>
+        <input type="date" id="inputExpiry1">
+
+        <button onclick="updateMedicine(1)">
+          Update Medicine 1
+        </button>
+      </div>
+
+
+      <!-- UPDATE MEDICINE 2 -->
+      <div class="update-box">
+        <h3>Medicine 2</h3>
+
+        <label>Medicine Name</label>
+        <input type="text" id="inputName2" placeholder="Enter medicine name">
+
+        <label>Stock</label>
+        <input type="number" id="inputStock2" placeholder="Enter stock">
+
+        <label>Expiry Date</label>
+        <input type="date" id="inputExpiry2">
+
+        <button onclick="updateMedicine(2)">
+          Update Medicine 2
+        </button>
+      </div>
+
+    </div>
+
+    <div id="status"></div>
+
+  </div>
+
+</div>
+
+
+<footer>
+  MediCare Smart Medicine Dispenser © 2026
+</footer>
+
+
+<script>
+
+function updateMedicine(number) {
+
+  let name = document.getElementById("inputName" + number).value;
+  let stock = document.getElementById("inputStock" + number).value;
+  let expiry = document.getElementById("inputExpiry" + number).value;
+
+  if (name === "" || stock === "" || expiry === "") {
+    alert("Please fill all details.");
+    return;
+  }
+
+  document.getElementById("name" + number).innerText = name;
+
+  document.getElementById("stock" + number).innerText =
+    stock + " Tablets";
+
+  document.getElementById("expiry" + number).innerText =
+    expiry;
+
+  document.getElementById("status").innerText =
+    "Medicine " + number + " updated successfully!";
+
+}
+
+</script>
+
+</body>
+</html>
